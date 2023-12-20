@@ -1,32 +1,34 @@
 from collections import deque
 
-class Graph:
-    def __init__(self):
-        self.graph = {}
+def bfs(graph, start):
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
 
-    def add_edge(self, vertex, neighbors):
-        self.graph[vertex] = neighbors
+    queue = deque([start])
 
-    def bfs(self, start):
-        visited = set()
-        queue = deque([start])
+    while queue:
+        current_node = queue.popleft()
+        print(f"Visiting node: {current_node}")
 
-        while queue:
-            current_vertex = queue.popleft()
-            if current_vertex not in visited:
-                print(current_vertex, end=" ")
-                visited.add(current_vertex)
-                queue.extend(neighbor for neighbor in self.graph[current_vertex] if neighbor not in visited)
+        for neighbor in graph[current_node]:
+            if distances[neighbor] == float('inf'):
+                distances[neighbor] = distances[current_node] + 1
+                queue.append(neighbor)
+
+    return distances
 
 # Example usage:
-g = Graph()
-g.add_edge('A', ['B', 'C'])
-g.add_edge('B', ['A', 'D', 'E'])
-g.add_edge('C', ['A', 'F', 'G'])
-g.add_edge('D', ['B'])
-g.add_edge('E', ['B', 'F'])
-g.add_edge('F', ['C', 'E'])
-g.add_edge('G', ['C'])
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F', 'G'],
+    'D': ['B'],
+    'E': ['B'],
+    'F': ['C'],
+    'G': ['C']
+}
 
-print("BFS starting from vertex 'A':")
-g.bfs('A')
+start_node = 'A'
+distances = bfs(graph, start_node)
+
+print(f"\nDistances from node {start_node}: {distances}")
